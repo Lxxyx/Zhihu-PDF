@@ -1,6 +1,5 @@
 import * as path from 'path'
 import * as puppeteer from 'puppeteer'
-import * as saga from 'redux-saga'
 import { URL } from 'url'
 import { IPuppeteer } from './typings/puppeteer'
 
