@@ -58,5 +58,4 @@ typings/
 .env
 
 pdf
-build
 .DS_Store
