@@ -1,6 +1,6 @@
 {
   "name": "zhihu-pdf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "下载 PDF 版的知乎答案",
   "main": "build/index.js",
   "scripts": {
