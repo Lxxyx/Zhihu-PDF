@@ -1,0 +1,25 @@
+{
+  "name": "Zhihu-PDF",
+  "version": "1.0.0",
+  "description": "下载 PDF 版的知乎答案",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lxxyx/Zhihu-PDF.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lxxyx/Zhihu-PDF/issues"
+  },
+  "homepage": "https://github.com/Lxxyx/Zhihu-PDF#readme",
+  "dependencies": {
+    "@types/node": "^8.0.27",
+    "puppeteer": "^0.10.2",
+    "typescript": "^2.3.4"
+  }
+}
