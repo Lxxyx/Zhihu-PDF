@@ -1,26 +1,43 @@
 import * as path from 'path'
 import * as puppeteer from 'puppeteer'
-import * as qs from 'querystring'
 import * as saga from 'redux-saga'
+import { URL } from 'url'
 import { IPuppeteer } from './typings/puppeteer'
 
 const Chrome = puppeteer as IPuppeteer
 const PDF_DIR = path.resolve(__dirname, '../pdf/')
 
-async function toZhiHu() {
+async function generatePDF(zhihuLink: string) {
+
+  if (!zhihuLink) {
+    throw new Error('require zhihuLink')
+  }
+
+  const url = new URL(zhihuLink)
+  const answerRe = /\/answer\/(\d+)\/?/
+
+  if (!answerRe.test(url.pathname)) {
+    throw new Error('require correct link, current is ' + zhihuLink)
+  }
+  
   const browser = await Chrome.launch({ headless: true })
   const page = await browser.newPage()
-  await page.goto('https://www.zhihu.com/question/20220067/answer/16424385')
+  await page.goto(zhihuLink)
+
+  await page.exposeFunction('delay', (ms) => new Promise(resolve => setTimeout(resolve, ms)))
   await page.evaluate(async () => {
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
     
+    const url = new window.URL(location.href)
+    const answerRe = /\/answer\/(\d+)\/?/
+    const answerId = answerRe.exec(url.pathname)[1]
+
     const scrollToBottom = () => new Promise(resolve => {
       const scrollHeight = document.body.scrollHeight
       const interval = setInterval(async () => {
         document.documentElement.scrollTop += 100
         if (scrollHeight - document.documentElement.scrollTop < window.innerHeight) {
           clearInterval(interval)
-          await delay(3000)
+          await (window as any).delay(3000)
           resolve()
         }
       }, 1)
@@ -31,17 +48,22 @@ async function toZhiHu() {
     const richContent = document.querySelector('.RichContent-actions')
     richContent.parentElement.removeChild(richContent)
     
-    const card = document.querySelector('[name="16424385"]').parentElement.parentElement.cloneNode(true)
+    const answer = document.querySelector(`[name="${answerId}"]`).parentElement.parentElement.cloneNode(true)
     document.body.innerHTML = ''
-    document.body.appendChild(card)
+    document.body.appendChild(answer)
   })
+
+  const title = await page.title()
+  
   await page.pdf({
-    path: `${PDF_DIR}/answer.pdf`,
+    path: `${PDF_DIR}/${title}.pdf`,
     format: 'A4',
     displayHeaderFooter: false,
     printBackground: true
   })
+  
   browser.close()
 }
 
-toZhiHu()
+export default generatePDF
+module.exports = generatePDF
